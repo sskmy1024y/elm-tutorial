@@ -1,22 +1,61 @@
 module Main exposing (main)
 
-import Html exposing (Html, div, text)
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
 
 
 
--- NOTE: divを作成して、文字を埋め込んでいる？
+-- NOTE: MODEL, UPDATE, VIEWというアーキテクチャの形に沿って作ってくれる？
 
 
-main : Html msg
 main =
-    div [] [ greet "hoge" |> text ]
+    Browser.sandbox { init = init, update = update, view = view }
 
 
 
--- interfaceのようなもの。
--- greet: (string) => string
+-- MODEL
 
 
-greet : String -> String
-greet name =
-    "Hello " ++ name ++ "!"
+type alias Model =
+    Int
+
+
+init : Model
+init =
+    0
+
+
+
+-- UPDATE
+
+
+type Msg
+    = Increment
+    | Decrement
+
+
+
+-- update関数。最後の一つが返り値の型で、それ以前は引数？ \
+-- → というより、手前の１個の引数を使って、残りの型の計算をする無名関数が順々に呼ばれているという事らしい
+-- `update(msg: Msg, model: Model) => Model`
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        Increment ->
+            model + 1
+
+        Decrement ->
+            model - 1
+
+
+
+-- View
+-- Modelを使ってView(HTML)を生成する
+
+
+view : Model -> Html Msg
+view model =
+    div [] [ button [ onClick Decrement ] [ text "-" ], text (String.fromInt model), button [ onClick Increment ] [ text "+" ] ]
